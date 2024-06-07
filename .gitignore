@@ -1,0 +1,5 @@
+.env
+.git
+.github
+postgres/data/
+postgres/postgres_bak.sql

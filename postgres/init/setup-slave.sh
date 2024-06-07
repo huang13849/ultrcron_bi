@@ -1,20 +1,23 @@
 #!/bin/bash
 set -e
 
-# Stop PostgreSQL server
-pg_ctl stop
+# Define variables
+MASTER_HOST=your_master_ip_or_hostname
+REPLICATOR_USER=replicator
+REPLICATOR_PASSWORD=replicatorpassword
+SLAVE_DATA_DIR=./postgres/slave/data
 
-# Clean old data directory
-rm -rf "$PGDATA"/*
+# Remove any existing data on the slave
+rm -rf "$SLAVE_DATA_DIR"/*
 
-# Perform base backup from master
-PGPASSWORD=masterpassword pg_basebackup -h 209.141.34.146 -D "$PGDATA" -U replicator -vP --wal-method=stream
+# Run pg_basebackup to synchronize data from the master
+PGPASSWORD=$REPLICATOR_PASSWORD pg_basebackup -h $MASTER_HOST -D "$SLAVE_DATA_DIR" -U $REPLICATOR_USER -vP --wal-method=stream
 
-touch "$PGDATA/standby.signal"
+# Create standby.signal file to indicate standby mode
+touch "$SLAVE_DATA_DIR/standby.signal"
 
-echo "primary_conninfo = 'host=209.141.34.146 port=5432 user=replicator password=replicatorpassword'" >> "$PGDATA/postgresql.conf"
-echo "primary_slot_name = 'replication_slot'" >> "$PGDATA/postgresql.conf"
+# Add replication settings to postgresql.conf
+echo "primary_conninfo = 'host=$MASTER_HOST port=5432 user=$REPLICATOR_USER password=$REPLICATOR_PASSWORD'" >> "$SLAVE_DATA_DIR/postgresql.conf"
+echo "primary_slot_name = 'replication_slot'" >> "$SLAVE_DATA_DIR/postgresql.conf"
 
-# Start PostgreSQL server
-pg_ctl start
-
+echo "Base backup and configuration complete."

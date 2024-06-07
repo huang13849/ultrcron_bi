@@ -2,6 +2,9 @@
 set -e
 
 # Define variables
+POSTGRES_MASTER_HOST=209.141.34.146
+POSTGRES_REPLICATOR_USER=replicator
+POSTGRES_REPLICATOR_PASSWORD=replicatorpassword
 SLAVE_DATA_DIR=./postgres/slave/data
 
 # Remove any existing data on the slave

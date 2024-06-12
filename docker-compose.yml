@@ -12,6 +12,8 @@ services:
       - SUPERSET_SECRET_KEY=${SUPERSET_SECRET_KEY}
       - SUPERSET_LOAD_EXAMPLES=no
       - SUPERSET_DATABASE_URI=${SUPERSET_DATABASE_URI}
+    volumes:
+      - ./superset:/app/superset_home 
     networks:
       - superset_network
 
@@ -19,9 +21,9 @@ services:
     image: postgres:latest
     container_name: postgres-slave
     environment:
-        POSTGRES_DB: ${POSTGRES_DB}
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-        POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
     ports:
       - "5433:5432"
     networks:
@@ -29,7 +31,28 @@ services:
     volumes:
       - ./postgres/data:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d
- 
+
+  jupyter:
+    image: jupyter/minimal-notebook
+    container_name: jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./jupyter/notebooks:/home/jovyan/work
+    networks:
+      - superset_network
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+    networks:
+      - superset_network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
 networks:
   superset_network:
-

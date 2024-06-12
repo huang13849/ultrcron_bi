@@ -48,7 +48,7 @@ services:
     environment:
       - CLICKHOUSE_USER=admin            # Set ClickHouse username
       - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1  # Enable default access management
-      - CLICKHOUSE_PASSWORD=${PASSWORD}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD}
     networks:
       - superset_network
         #volumes:

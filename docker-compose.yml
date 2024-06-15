@@ -10,6 +10,7 @@ services:
       - SUPERSET_SECRET_KEY=${SUPERSET_SECRET_KEY}
       - SUPERSET_LOAD_EXAMPLES=no
       - SUPERSET_DATABASE_URI=${SUPERSET_DATABASE_URI}
+      - SUPERSET_HOME=/app/superset_home
     volumes:
       - ./superset:/app/superset_home 
     networks:

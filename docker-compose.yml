@@ -33,7 +33,8 @@ services:
       - ./postgres/init:/docker-entrypoint-initdb.d
 
   jupyter:
-    build: ./jupyter
+    # build: ./jupyter
+    image: jupyter/tensorflow-notebook:latest  
     container_name: jupyter
     ports:
       - "8888:8888"

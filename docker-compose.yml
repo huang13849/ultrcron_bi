@@ -33,7 +33,7 @@ services:
       - ./postgres/init:/docker-entrypoint-initdb.d
 
   jupyter:
-    image: jupyter/minimal-notebook
+    build: ./jupyter
     container_name: jupyter
     ports:
       - "8888:8888"

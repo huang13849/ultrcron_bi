@@ -32,6 +32,39 @@ services:
       - ./postgres/data:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d
 
+  neo4j:
+    image: neo4j:latest
+    container_name: neo4j
+    environment:
+      - NEO4J_AUTH = ${NEO4J_AUTH} # Format: neo4j/<password>
+    ports:
+      - "7474:7474" # HTTP access
+      - "7687:7687" # Bolt access
+    networks:
+      - superset_network
+    volumes:
+      - ./neo4j/data:/data
+      - ./neo4j/logs:/logs
+      - ./neo4j/import:/import
+      - ./neo4j/plugins:/plugins
+  
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    environment:
+      WORDPRESS_DB_HOST: ${MYSQL_MASTER_HOST}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+    volumes:
+      - ./wordpress/themes:/var/www/html/wp-content/themes
+      - ./wordpress/plugins:/var/www/html/wp-content/plugins
+      - ./wordpress/uploads:/var/www/html/wp-content/uploads
+    ports:
+      - "8081:80" # Maps port 80 in the container to 8080 on the host
+    networks:
+      - superset_network
+
   # jupyter:
     # build: ./jupyter
   #   image: jupyter/tensorflow-notebook:latest  

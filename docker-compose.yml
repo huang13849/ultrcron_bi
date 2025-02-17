@@ -1,21 +1,4 @@
 services:
-  # superset:
-  #   image: apache/superset
-  #   container_name: superset
-  #   ports:
-  #     - "8088:8088"
-  #   depends_on:
-  #     - postgres-slave
-  #   environment:
-  #     - SUPERSET_SECRET_KEY=${SUPERSET_SECRET_KEY}
-  #     - SUPERSET_LOAD_EXAMPLES=no
-  #     - SUPERSET_DATABASE_URI=${SUPERSET_DATABASE_URI}
-  #     - SUPERSET_HOME=/app/superset_home
-  #   volumes:
-  #     - ./superset:/app/superset_home 
-  #   networks:
-  #     - superset_network
-
   postgres-slave:
     image: postgres:latest
     container_name: postgres-slave
@@ -47,23 +30,60 @@ services:
       - ./neo4j/logs:/logs
       - ./neo4j/import:/import
       - ./neo4j/plugins:/plugins
-  
-  wordpress:
-    image: wordpress:latest
-    container_name: wordpress
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    restart: unless-stopped
     environment:
-      WORDPRESS_DB_HOST: ${MYSQL_MASTER_HOST}
-      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
-      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
-      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER} 
+      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
     volumes:
-      - ./wordpress/themes:/var/www/html/wp-content/themes
-      - ./wordpress/plugins:/var/www/html/wp-content/plugins
-      - ./wordpress/uploads:/var/www/html/wp-content/uploads
-    ports:
-      - "8081:80" # Maps port 80 in the container to 8080 on the host
+      - ./mysql_data:/var/lib/mysql
     networks:
       - superset_network
+
+  wordpress_pcb:
+    image: wordpress:latest
+    container_name: wordpress_pcb
+    restart: unless-stopped
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DATABASE_PCB}
+    ports:
+      - "8081:80"
+    volumes:
+      - ./wordpress/site_pcb/themes:/var/www/html/wp-content/themes
+      - ./wordpress/site_pcb/plugins:/var/www/html/wp-content/plugins
+      - ./wordpress/site_pcb/uploads:/var/www/html/wp-content/uploads
+    networks:
+      - superset_network
+
+  wordpress_arts:
+    image: wordpress:latest
+    container_name: wordpress_arts
+    restart: unless-stopped
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DATABASE_ARTS}
+    ports:
+      - "8082:80"
+    volumes:
+      - ./wordpress/site_arts/themes:/var/www/html/wp-content/themes
+      - ./wordpress/site_arts/plugins:/var/www/html/wp-content/plugins
+      - ./wordpress/site_arts/uploads:/var/www/html/wp-content/uploads
+    networks:
+      - superset_network
+
+
+networks:
+  superset_network:
 
   # jupyter:
     # build: ./jupyter
@@ -88,5 +108,19 @@ services:
   #   command:
   #     - '--config.file=/etc/prometheus/prometheus.yml'
 
-networks:
-  superset_network:
+  # superset:
+  #   image: apache/superset
+  #   container_name: superset
+  #   ports:
+  #     - "8088:8088"
+  #   depends_on:
+  #     - postgres-slave
+  #   environment:
+  #     - SUPERSET_SECRET_KEY=${SUPERSET_SECRET_KEY}
+  #     - SUPERSET_LOAD_EXAMPLES=no
+  #     - SUPERSET_DATABASE_URI=${SUPERSET_DATABASE_URI}
+  #     - SUPERSET_HOME=/app/superset_home
+  #   volumes:
+  #     - ./superset:/app/superset_home 
+  #   networks:
+  #     - superset_network

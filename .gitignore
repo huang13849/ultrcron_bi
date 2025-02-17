@@ -7,3 +7,4 @@ neo4j/data
 neo4j/logs
 neo4j/import
 wordpress
+mysql_data/

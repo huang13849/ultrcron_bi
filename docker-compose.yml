@@ -15,21 +15,21 @@ services:
       - ./postgres/data:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d
 
-  neo4j:
-    image: neo4j:latest
-    container_name: neo4j
-    environment:
-      - NEO4J_AUTH = ${NEO4J_AUTH} # Format: neo4j/<password>
-    ports:
-      - "7474:7474" # HTTP access
-      - "7687:7687" # Bolt access
-    networks:
-      - superset_network
-    volumes:
-      - ./neo4j/data:/data
-      - ./neo4j/logs:/logs
-      - ./neo4j/import:/import
-      - ./neo4j/plugins:/plugins
+  # neo4j:
+  #   image: neo4j:latest
+  #   container_name: neo4j
+  #   environment:
+  #     - NEO4J_AUTH = ${NEO4J_AUTH} # Format: neo4j/<password>
+  #   ports:
+  #     - "7474:7474" # HTTP access
+  #     - "7687:7687" # Bolt access
+  #   networks:
+  #     - superset_network
+  #   volumes:
+  #     - ./neo4j/data:/data
+  #     - ./neo4j/logs:/logs
+  #     - ./neo4j/import:/import
+  #     - ./neo4j/plugins:/plugins
 
   mysql:
     image: mysql:latest
@@ -45,41 +45,41 @@ services:
     networks:
       - superset_network
 
-  wordpress_pcb:
-    image: wordpress:latest
-    container_name: wordpress_pcb
-    restart: unless-stopped
-    environment:
-      WORDPRESS_DB_HOST: mysql
-      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
-      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
-      WORDPRESS_DB_NAME: ${WORDPRESS_DATABASE_PCB}
-    ports:
-      - "8081:80"
-    volumes:
-      - ./wordpress/site_pcb/themes:/var/www/html/wp-content/themes
-      - ./wordpress/site_pcb/plugins:/var/www/html/wp-content/plugins
-      - ./wordpress/site_pcb/uploads:/var/www/html/wp-content/uploads
-    networks:
-      - superset_network
+  # wordpress_pcb:
+  #   image: wordpress:latest
+  #   container_name: wordpress_pcb
+  #   restart: unless-stopped
+  #   environment:
+  #     WORDPRESS_DB_HOST: mysql
+  #     WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+  #     WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+  #     WORDPRESS_DB_NAME: ${WORDPRESS_DATABASE_PCB}
+  #   ports:
+  #     - "8081:80"
+  #   volumes:
+  #     - ./wordpress/site_pcb/themes:/var/www/html/wp-content/themes
+  #     - ./wordpress/site_pcb/plugins:/var/www/html/wp-content/plugins
+  #     - ./wordpress/site_pcb/uploads:/var/www/html/wp-content/uploads
+  #   networks:
+  #     - superset_network
 
-  wordpress_arts:
-    image: wordpress:latest
-    container_name: wordpress_arts
-    restart: unless-stopped
-    environment:
-      WORDPRESS_DB_HOST: mysql
-      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
-      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
-      WORDPRESS_DB_NAME: ${WORDPRESS_DATABASE_ARTS}
-    ports:
-      - "8082:80"
-    volumes:
-      - ./wordpress/site_arts/themes:/var/www/html/wp-content/themes
-      - ./wordpress/site_arts/plugins:/var/www/html/wp-content/plugins
-      - ./wordpress/site_arts/uploads:/var/www/html/wp-content/uploads
-    networks:
-      - superset_network
+  # wordpress_arts:
+  #   image: wordpress:latest
+  #   container_name: wordpress_arts
+  #   restart: unless-stopped
+  #   environment:
+  #     WORDPRESS_DB_HOST: mysql
+  #     WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+  #     WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+  #     WORDPRESS_DB_NAME: ${WORDPRESS_DATABASE_ARTS}
+  #   ports:
+  #     - "8082:80"
+  #   volumes:
+  #     - ./wordpress/site_arts/themes:/var/www/html/wp-content/themes
+  #     - ./wordpress/site_arts/plugins:/var/www/html/wp-content/plugins
+  #     - ./wordpress/site_arts/uploads:/var/www/html/wp-content/uploads
+  #   networks:
+  #     - superset_network
 
 
 networks:
